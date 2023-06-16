@@ -1,45 +1,88 @@
 
 const choices = ['ROCK','PAPER','SCISSORS'];
 
+let playerScore = 0;
+let computerScore = 0;
+
+
 function getComputerChoice(){
     return choices[Math.floor(Math.random() * 3)];
 }
 
-function playRound(playerSelection, computerSelection){
-    const playerSelectionParsed = parsePlayerSelection(playerSelection);
+function playRound(e){
+    const playerSelectionParsed = e.target.innerHTML;
+    const computerSelection = getComputerChoice();
+    let result;
     if (playerSelectionParsed === "ROCK"){
         if (computerSelection === "SCISSORS"){
-            return "Win";
+            result = "Win";
         }
         if (computerSelection === "PAPER"){
-            return "Loss";
+            result = "Loss";
         }
     }
     if (playerSelectionParsed === "PAPER"){
         if (computerSelection === "ROCK"){
-            return "Win";
+            result = "Win";
         }
         if (computerSelection === "SCISSORS"){
-            return "Loss";
+            result = "Loss";
         }
     }
     if (playerSelectionParsed === "SCISSORS"){
         if (computerSelection === "PAPER"){
-            return "Win";
+            result = "Win";
         }
         if (computerSelection === "ROCK"){
-            return "Loss";
+            result = "Loss";
         }
     }
-    return "Draw"
+    if (!result){
+        result = "Draw";
+    }
+    console.log(result);
+    updateScore(result);
+    checkScore();
 }
 
-function parsePlayerSelection(playerChoice){
-    let parsedAnswer = playerChoice.toUpperCase();
-    if (choices.includes(parsedAnswer)){
-        return parsedAnswer;
+function checkScore(){
+    console.log(`Player: ${playerScore} - Computer: ${computerScore}` )
+    if (playerScore === 5 || computerScore === 5){
+        if (playerScore > computerScore){
+            writeMessage("You won the game! Congrats!");
+        }
+        else{
+            writeMessage("You lost the game! Better luck next time!");
+        }
+        console.log("Reset game");
+        playerScore = 0;
+        computerScore = 0;
     }
-    return undefined;
+}
+
+function updateScore(result){
+    if (result === "Win"){
+        playerScore += 1;
+        writeMessage("You win this round!")
+    }
+    if (result === "Loss"){
+        computerScore += 1;
+        writeMessage("You lose this round!")
+    }
+    if (result === "Draw"){
+        writeMessage("This rounds a draw!")
+    }
+    updateScoreboard();
+}
+
+function updateScoreboard(){
+    const scoreboard = document.querySelector('#scoreboard');
+    scoreboard.textContent = `Player: ${playerScore} - Computer: ${computerScore}`;
+}
+
+function writeMessage(string){
+    const message = document.querySelector('#message');
+    message.textContent = `${string}`;
 }
 
 function game(){
@@ -50,47 +93,47 @@ function game(){
     let computerWins = 0;
     let computerChoice = undefined;
 
-    for (let i = 0; i < rounds; i++){
-        playerResponse = undefined;
-        alert(`Round ${i+1}`);
-        console.log(`Round ${i+1}`);
-        alert(`Current score, Player: ${playerWins} Computer: ${computerWins}`);
-        console.log(`Current score, Player: ${playerWins} Computer: ${computerWins}`)
-        while (!playerResponse){
-            playerResponse = parsePlayerSelection(prompt("Select Rock, Paper, Scissors: "));
-            if (!playerResponse){
-                alert("Invalid choice, please select Rock, Paper or Scissors.");
-                console.log("Invalid choice, please select Rock, Paper or Scissors.");
-            }
-        }
 
-        computerChoice = getComputerChoice();
+    playerResponse = undefined;
+    console.log(`Current score, Player: ${playerWins} Computer: ${computerWins}`)
+    /*
+    while (!playerResponse){
+        playerResponse = parsePlayerSelection(prompt("Select Rock, Paper, Scissors: "));
+        if (!playerResponse){
+            console.log("Invalid choice, please select Rock, Paper or Scissors.");
+        }
+    }
+    */
 
-        gameResult = playRound(playerResponse, computerChoice);
-        alert(`Player Choice: ${playerResponse} Computer Choice: ${computerChoice} Result: ${gameResult}`);
-        if (gameResult==="Win"){
-            playerWins += 1;
-        }
-        else if (gameResult==="Loss"){
-            computerWins += 1;
-        }
-        else{
-            continue;
-        }
+    computerChoice = getComputerChoice();
+
+    gameResult = playRound(playerResponse, computerChoice);
+    if (gameResult==="Win"){
+        playerWins += 1;
+    }
+    else if (gameResult==="Loss"){
+        computerWins += 1;
     }
 
     if (playerWins > computerWins){
-        alert("You win!");
         console.log("You win!");
     }
     if (playerWins < computerWins){
-        alert("Computer wins!");
         console.log("Computer wins!");
     }
     if (playerWins === computerWins){
-        alert("Tie game!");
         console.log("Tie game!");
     }
 }
 
-game();
+function getChoice(e){
+    console.log(e);
+    console.log(e.target.innerHTML);
+}
+
+const buttons = Array.from(document.querySelectorAll('.choice'));
+console.log(buttons);
+buttons.forEach(button => button.addEventListener('click',playRound))
+
+
+/*game();*/
